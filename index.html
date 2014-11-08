@@ -1,16 +1,8 @@
 <!DOCTYPE html>
 <head>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/coffee-script/1.7.1/coffee-script.min.js"></script>
+  <script type="text/coffeescript" src="create-lots-of-triangles.coffee"></script>
 </head>
-<body>
-  <svg>
-
-    <clipPath id="for1"><polygon points="50,0 100,100 0,100"/></clipPath>
-    <polygon points="50,0 100,100 0,100" style="fill:none; stroke:red; stroke-width:20;" clip-path="url(#for1)"/>
-
-    <clipPath id="for2"><polygon points="50,0 150,0, 100,100"/></clipPath>
-    <polygon points="50,0 150,0, 100,100" style="fill:none; stroke:blue; stroke-width:20;" clip-path="url(#for2)"/>
-
-    <clipPath id="for3"><polygon points="150,0 200,100, 100,100"/></clipPath>
-    <polygon points="150,0 200,100, 100,100" style="fill:none; stroke:cyan; stroke-width:20;" clip-path="url(#for3)"/>
-  </svg>
+<body style="position: relative;">
+  <img src="http://anifav.com/topics/images/0613_arise2.jpg" style="position: absolute; top: 0; left: 0; z-index: -1;">
 </body>

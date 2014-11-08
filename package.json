@@ -1,0 +1,24 @@
+{
+  "name": "html-triangle",
+  "version": "1.0.0",
+  "description": "> SVGはインセットな線をサポートしていないが、同じポリゴンでクリッピングすることで一見インセットな線を描けるというサンプル。",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/minodisk/html-triangle.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/minodisk/html-triangle/issues"
+  },
+  "homepage": "https://github.com/minodisk/html-triangle",
+  "devDependencies": {
+    "coffee-script": "^1.8.0",
+    "gulp": "^3.8.10",
+    "gulp-webserver": "^0.8.7"
+  }
+}
