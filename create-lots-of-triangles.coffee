@@ -23,7 +23,6 @@ createTriangle = (a, b, c) ->
   clipId = "clip#{clipIndex++}"
 
   center = a.add(b).add(c).div(3)
-  console.log center
 
   g = document.createElementNS NAMESPACE, 'g'
 
