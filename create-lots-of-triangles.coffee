@@ -7,6 +7,35 @@ SIDE = 100
 SIDE_HALF = SIDE / 2
 HEIGHT = SIDE_HALF * Math.sqrt 3
 
+hsv2rgb = (h, s, v) ->
+  data = []
+  if s is 0
+    rgb = [v, v, v]
+  else
+    h = (h % 360) / 60
+    i = Math.floor(h)
+    data = [
+      v * (1 - s)
+      v * (1 - s * (h - i))
+      v * (1 - s * (1 - (h - i)))
+    ]
+    switch i
+      when 0
+        rgb = [v, data[2], data[0]]
+      when 1
+        rgb = [data[1], v, data[0]]
+      when 2
+        rgb = [data[0], v, data[2]]
+      when 3
+        rgb = [data[0], data[1], v]
+      when 4
+        rgb = [data[2], data[0], v]
+      else
+        rgb = [v, data[0], data[1]]
+  "#" + rgb.map((x) ->
+    ("0" + Math.round(x * 255).toString(16)).slice -2
+  ).join("")
+
 class Point
   @lerp: (a, b, ratio) -> b.sub(a).mul(ratio).add(a)
   constructor: (@x, @y) ->
@@ -17,9 +46,11 @@ class Point
   toString: -> "#{@x>>0},#{@y>>0}"
 
 # polygonのstrokeはinsetやoutsetなど線をパスのどの位置に描画するかのオプションがSVGの仕様に定義されていない。
-# clipPathによって描きたい図形と同じ形のクリッピングパスを作ってマスキングする。
+# clipPathによって描きたい図形と同じ形のクリッピングパスを作ってマスキングすることで擬似的にinsetを実現する。
 clipIndex = 0
 createTriangle = (a, b, c) ->
+  color = hsv2rgb clipIndex * 10, 1, 1
+  console.log clipIndex * 10, color
   clipId = "clip#{clipIndex++}"
 
   center = a.add(b).add(c).div(3)
@@ -31,8 +62,8 @@ createTriangle = (a, b, c) ->
   clipPath.setAttribute 'id', clipId
   polygon = document.createElementNS NAMESPACE, 'polygon'
   # そのままだと若干の隙間が開くので三角形の中心から外側に拡張したクリップにする
-  # polygon.setAttribute 'points', "#{a.toString()} #{b.toString()} #{c.toString()}"
-  polygon.setAttribute 'points', "#{Point.lerp(center, a, 1.05).toString()} #{Point.lerp(center, b, 1.05).toString()} #{Point.lerp(center, c, 1.05).toString()}"
+  polygon.setAttribute 'points', "#{a.toString()} #{b.toString()} #{c.toString()}"
+  # polygon.setAttribute 'points', "#{Point.lerp(center, a, 1.01).toString()} #{Point.lerp(center, b, 1.01).toString()} #{Point.lerp(center, c, 1.01).toString()}"
   clipPath.appendChild polygon
   g.appendChild clipPath
 
@@ -40,7 +71,8 @@ createTriangle = (a, b, c) ->
   polygon = document.createElementNS NAMESPACE, 'polygon'
   polygon.setAttribute 'points', "#{a.toString()} #{b.toString()} #{c.toString()}"
   polygon.setAttribute 'clip-path', "url(##{clipId})"
-  polygon.setAttribute 'style', 'fill: transparent; stroke: red; stroke-width: 10;'
+  polygon.setAttribute 'style', "fill: transparent; stroke: #{color}; stroke-width: 10;"
+  polygon.setAttribute 'data-color', color
   polygon.addEventListener 'mouseover', onMouseOver
   polygon.addEventListener 'mouseout', onMouseOut
   polygon.addEventListener 'click', onClick
@@ -52,13 +84,15 @@ createTriangle = (a, b, c) ->
 # アニメーションしてもよい
 onMouseOver = (e) ->
   polygon = e.currentTarget
-  polygon.setAttribute 'style', 'fill: transparent; stroke: red; stroke-width: 30;'
+  color = polygon.getAttribute 'data-color'
+  polygon.setAttribute 'style', "fill: transparent; stroke: #{color}; stroke-width: 30;"
 
 # ポリゴンからマウスアウトした際のイベントハンドラ
 # アニメーションしてもよい
 onMouseOut = (e) ->
   polygon = e.currentTarget
-  polygon.setAttribute 'style', 'fill: transparent; stroke: red; stroke-width: 10;'
+  color = polygon.getAttribute 'data-color'
+  polygon.setAttribute 'style', "fill: transparent; stroke: #{color}; stroke-width: 10;"
 
 # click時に何かしてもよい
 onClick = (e) ->
